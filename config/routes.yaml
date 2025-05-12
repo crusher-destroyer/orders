@@ -1,0 +1,9 @@
+app.swagger_ui:
+    path: /api/doc
+    methods: GET
+    defaults: { _controller: nelmio_api_doc.controller.swagger_ui}
+
+order_api:
+    resource: ../src/Controller/
+    type: attribute
+    prefix: /api/order
