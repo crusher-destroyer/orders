@@ -5,6 +5,7 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     lock.order_ttl: '%env(float:LOCK_ORDER_TTL)%'
+    service.base_url: '%env(string:BASE_URL)%'
 
 services:
     # default configuration for services in *this* file
@@ -32,6 +33,7 @@ services:
         public: true
         arguments:
             $messageBus: '@messenger.bus.default'
+            $lockFactory: '@app.lock.order_lock_factory'
             $ordersFactory: '@App\Factory\OrdersFactory'
             $ordersGoodsFactory: '@App\Factory\OrdersGoodsFactory'
             $usersRepository: '@App\Repository\UsersRepository'

@@ -10,6 +10,8 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: GoodsRepository::class)]
+#[ORM\Index(name: 'idx_id', columns: ['id'])]
+#[ORM\HasLifecycleCallbacks]
 class Goods
 {
     use UpdateTimestampsTrait;
@@ -33,9 +35,17 @@ class Goods
     #[ORM\OneToMany(targetEntity: OrdersGoods::class, mappedBy: 'goods', orphanRemoval: true)]
     private Collection $ordersGoods;
 
+
+    /**
+     * @var Collection<int, Orders>
+     */
+    #[ORM\ManyToMany(targetEntity: Orders::class, mappedBy: 'goods')]
+    private Collection $orders;
+
     public function __construct()
     {
         $this->ordersGoods = new ArrayCollection();
+        $this->orders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -80,6 +90,14 @@ class Goods
     }
 
     /**
+     * @return Collection<int, Orders>
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    /**
      * @return Collection<int, OrdersGoods>
      */
     public function getOrdersGoods(): Collection
@@ -109,16 +127,17 @@ class Goods
         return $this;
     }
 
-    public function decreaseCount(int $quantity): void
+    public function decreaseCount(int $cnt): void
     {
-        if ($quantity <= 0) {
+        if ($cnt <= 0) {
             throw new \InvalidArgumentException('Количество товара должно быть > 0');
         }
 
-        if ($this->count < $quantity) {
+        if ($this->count < $cnt) {
             throw new \RuntimeException('Недостаточно товаров на складе');
         }
 
-        $this->count -= $quantity;
+        $this->count -= $cnt;
     }
+
 }

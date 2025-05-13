@@ -9,6 +9,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: OrdersRepository::class)]
+#[ORM\Index(name: 'idx_id', columns: ['id'])]
+#[ORM\Index(name: 'idx_status', columns: ['status'])]
+#[ORM\HasLifecycleCallbacks]
 class Orders
 {
     use UpdateTimestampsTrait;
@@ -30,9 +33,17 @@ class Orders
     #[ORM\OneToMany(targetEntity: OrdersGoods::class, mappedBy: 'orders', cascade: ['persist'], orphanRemoval: true)]
     private Collection $ordersGoods;
 
+    /**
+     * @var Collection<int, Goods>
+     */
+    #[ORM\ManyToMany(targetEntity: Goods::class)]
+    #[ORM\JoinTable(name: 'orders_goods')]
+    private Collection $goods;
+
     public function __construct()
     {
         $this->ordersGoods = new ArrayCollection();
+        $this->goods = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -92,5 +103,13 @@ class Orders
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Goods>
+     */
+    public function getGoods(): Collection
+    {
+        return $this->goods;
     }
 }
