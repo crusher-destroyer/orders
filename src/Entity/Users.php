@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UsersRepository;
+use App\Trait\UpdateTimestampsTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -10,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: UsersRepository::class)]
 class Users
 {
+    use UpdateTimestampsTrait;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

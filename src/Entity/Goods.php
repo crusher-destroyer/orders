@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\GoodsRepository;
+use App\Trait\UpdateTimestampsTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -11,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: GoodsRepository::class)]
 class Goods
 {
+    use UpdateTimestampsTrait;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -105,5 +107,18 @@ class Goods
         }
 
         return $this;
+    }
+
+    public function decreaseCount(int $quantity): void
+    {
+        if ($quantity <= 0) {
+            throw new \InvalidArgumentException('Количество товара должно быть > 0');
+        }
+
+        if ($this->count < $quantity) {
+            throw new \RuntimeException('Недостаточно товаров на складе');
+        }
+
+        $this->count -= $quantity;
     }
 }

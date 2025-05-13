@@ -3,22 +3,18 @@
 namespace App\Entity;
 
 use App\Repository\OrdersGoodsRepository;
+use App\Trait\UpdateTimestampsTrait;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: OrdersGoodsRepository::class)]
 class OrdersGoods
 {
+    use UpdateTimestampsTrait;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
-
-    #[ORM\Column]
-    private ?int $orderId;
-
-    #[ORM\Column]
-    private ?int $productId;
 
     #[ORM\Column(type: Types::SMALLINT)]
     private ?int $count;
@@ -37,30 +33,6 @@ class OrdersGoods
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getOrderId(): int
-    {
-        return $this->orderId;
-    }
-
-    public function setOrderId(int $orderId): static
-    {
-        $this->orderId = $orderId;
-
-        return $this;
-    }
-
-    public function getProductId(): int
-    {
-        return $this->productId;
-    }
-
-    public function setProductId(int $productId): static
-    {
-        $this->productId = $productId;
-
-        return $this;
     }
 
     public function getCount(): int

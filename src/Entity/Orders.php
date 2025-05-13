@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\OrdersRepository;
+use App\Trait\UpdateTimestampsTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -10,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: OrdersRepository::class)]
 class Orders
 {
+    use UpdateTimestampsTrait;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -25,7 +27,7 @@ class Orders
     /**
      * @var Collection<int, OrdersGoods>
      */
-    #[ORM\OneToMany(targetEntity: OrdersGoods::class, mappedBy: 'orders', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: OrdersGoods::class, mappedBy: 'orders', cascade: ['persist'], orphanRemoval: true)]
     private Collection $ordersGoods;
 
     public function __construct()

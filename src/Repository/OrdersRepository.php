@@ -9,11 +9,20 @@ use Doctrine\Persistence\ManagerRegistry;
 /**
  * @extends ServiceEntityRepository<Orders>
  */
-class OrdersRepository extends ServiceEntityRepository
+class OrdersRepository extends BaseRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Orders::class);
+    }
+
+    public function findOrderItems(array $ids): array
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.id IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->getResult();
     }
 
 //    /**
