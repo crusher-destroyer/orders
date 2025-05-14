@@ -1,11 +1,5 @@
 APP=symfony
 
-psalm:
-	docker exec $(APP) php ./vendor/bin/psalm --no-cache
-
-unit_test:
-	docker exec $(APP) php vendor/bin/phpunit --testdox
-
 coverage:
 	docker exec $(APP) env XDEBUG_MODE=coverage php vendor/bin/phpunit --coverage-html var/coverage
 	google-chrome ./var/coverage/index.html
