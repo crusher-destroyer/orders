@@ -15,7 +15,7 @@ OpenAPI documentation via NelmioApiDocBundle
 Lock to prevent race conditions on stock items
 
 ```
-LOCK_ORDER_TTL=10.0
+LOCK_ORDER_TTL=5.0
 ```
 
 Lock dsn for Symfony Lock
