@@ -9,6 +9,7 @@ use App\Factory\OrdersFactory;
 use App\Factory\OrdersGoodsFactory;
 use App\Lock\OrderLockFactory;
 use App\Message\OrderMessage;
+use App\Repository\GoodsRepository;
 use App\Repository\OrdersGoodsRepository;
 use App\Repository\OrdersRepository;
 use App\Repository\UsersRepository;
@@ -24,6 +25,7 @@ class OrderService
         private readonly OrdersGoodsFactory    $ordersGoodsFactory,
         private readonly UsersRepository       $usersRepository,
         private readonly OrdersRepository      $repository,
+        private readonly GoodsRepository       $goodsRepository,
         private readonly OrdersGoodsRepository $ordersGoodsRepository
     )
     {
@@ -51,6 +53,7 @@ class OrderService
             }
 
             $checkStock = $this->checkStock($ids, $goods);
+
             $status = $checkStock['status'] ?? false;
 
             if ($status === false) {
@@ -74,7 +77,7 @@ class OrderService
     public function checkStock(array $ids, array $goods): array
     {
         //достаем фактические остатки из бд
-        $orderItems = $this->repository->findOrderItems($ids);
+        $orderItems = $this->goodsRepository->findOrderItems($ids);
 
         $goodsMap = [];
         foreach ($orderItems as $orderItem) {
@@ -84,9 +87,12 @@ class OrderService
         //товары в заказе
         foreach ($goods as $item) {
             /** @var Goods $product */
-            $product = $goodsMap[$item['id']] ?? null;
 
-            if (null === $product || $product->getCount() < $item['count']) {
+            if (array_key_exists($item['id'], $goodsMap)) {
+                $product = $goodsMap[$item['id']] ?? null;
+            }
+
+            if (!isset($product) || $product->getCount() < $item['count']) {
                 return [
                     'status' => false,
                     'map' => []
@@ -104,7 +110,9 @@ class OrderService
         $order = $this->ordersFactory->create($user, Status::PENDING);
 
         foreach ($goods as $item) {
-            $product = $goodsMap[$item['id']];
+            if (array_key_exists($item['id'], $goodsMap)) {
+                $product = $goodsMap[$item['id']] ?? null;
+            }
             /** @var Goods $product */
             $ordersGoods = $this->ordersGoodsFactory->create($order, $product, $item['count']);
             $order->addOrdersGood($ordersGoods);

@@ -22,11 +22,11 @@ class OrdersGoods
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     private ?string $lockedPrice;
 
-    #[ORM\ManyToOne(inversedBy: 'ordersGoods')]
+    #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'ordersGoods')]
     #[ORM\JoinColumn(nullable: false)]
     private Orders $orders;
 
-    #[ORM\ManyToOne(inversedBy: 'ordersGoods')]
+    #[ORM\ManyToOne(cascade: ['persist'], inversedBy: 'ordersGoods')]
     #[ORM\JoinColumn(nullable: false)]
     private Goods $goods;
 

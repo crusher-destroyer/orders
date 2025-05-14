@@ -3,7 +3,7 @@ APP=symfony
 psalm:
 	docker exec $(APP) php ./vendor/bin/psalm --no-cache
 
-run_unit_test:
+unit_test:
 	docker exec $(APP) php vendor/bin/phpunit --testdox
 
 coverage:
@@ -21,22 +21,5 @@ build:
 	@docker exec $(APP) composer install
 	@docker exec $(APP) bin/console doctrine:migrations:migrate --no-interaction
 
-update:
-	@composer install
-	@bin/console doctrine:migrations:migrate --no-interaction
-	@bin/console cache:clear
-
-worker:
-	supervisord -c /var/www/html/worker.conf -s
-
-psalm:
-	@vendor/bin/psalm --no-cache
-
-composer-install:
-	@composer install --optimize-autoloader
-
-ecs:
-	@vendor/bin/ecs
-
-ecs-fix:
-	@vendor/bin/ecs --fix
+consume:
+	@docker exec $(APP) bin/console messenger:consume async

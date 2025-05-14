@@ -16,15 +16,6 @@ class OrdersRepository extends BaseRepository
         parent::__construct($registry, Orders::class);
     }
 
-    public function findOrderItems(array $ids): array
-    {
-        return $this->createQueryBuilder('p')
-            ->where('p.id IN (:ids)')
-            ->setParameter('ids', $ids)
-            ->getQuery()
-            ->getResult();
-    }
-
 //    /**
 //     * @return Orders[] Returns an array of Orders objects
 //     */

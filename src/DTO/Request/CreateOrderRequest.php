@@ -2,30 +2,41 @@
 
 namespace App\DTO\Request;
 
-use Symfony\Component\PropertyInfo\Type;
 use Symfony\Component\Validator\Constraints as Assert;
+use OpenApi\Attributes as OA;
 
 final readonly class CreateOrderRequest
 {
     public function __construct(
-        #[Assert\NotBlank(message: 'Поле userId не может быть пустым')]
+        #[Assert\NotBlank]
         #[Assert\Positive]
-        #[Assert\Type(
-            type: Type::BUILTIN_TYPE_INT,
-            message: 'Поле userId должно быть числом'
-        )]
+        #[OA\Property(example: 123)]
         public int $userId,
 
         /**
-         * @var OrderItemRequest[]
+         * @var array<string>
          */
-        #[Assert\NotBlank]
-        #[Assert\Type('array')]
+        #[Assert\NotNull(message: 'goods не может быть null')]
+        #[Assert\Type('array', message: 'goods должен быть массивом')]
+        #[Assert\NotBlank(message: 'goods не может быть пуст')]
         #[Assert\All([
-            new Assert\Type(type: OrderItemRequest::class),
+            new Assert\Collection([
+                'fields' => [
+                    'id' => [
+                        new Assert\NotBlank(),
+                        new Assert\Type('int'),
+                        new Assert\Positive(),
+                    ],
+                    'count' => [
+                        new Assert\NotBlank(),
+                        new Assert\Type('int'),
+                        new Assert\GreaterThanOrEqual(1, message: "Товаров в заказе должно быть больше 0"),
+                    ],
+                ],
+                'allowExtraFields' => false,
+                'allowMissingFields' => false,
+            ])
         ])]
-        #[Assert\Valid]
         public array $goods
-    ) {
-    }
+    ) {}
 }

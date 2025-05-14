@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250512210103 extends AbstractMigration
+final class Version20250514003723 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -33,16 +33,40 @@ final class Version20250512210103 extends AbstractMigration
             CREATE SEQUENCE users_id_seq INCREMENT BY 1 MINVALUE 1 START 1
         SQL);
         $this->addSql(<<<'SQL'
-            CREATE TABLE goods (id INT NOT NULL, name VARCHAR(255) NOT NULL, price NUMERIC(10, 2) NOT NULL, count INT NOT NULL, PRIMARY KEY(id))
+            CREATE TABLE goods (id INT NOT NULL, name VARCHAR(255) NOT NULL, price NUMERIC(10, 2) NOT NULL, count INT NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))
         SQL);
         $this->addSql(<<<'SQL'
-            CREATE TABLE orders (id INT NOT NULL, customer_id INT NOT NULL, status VARCHAR(255) NOT NULL, PRIMARY KEY(id))
+            COMMENT ON COLUMN goods.created_at IS '(DC2Type:datetime_immutable)'
+        SQL);
+        $this->addSql(<<<'SQL'
+            COMMENT ON COLUMN goods.updated_at IS '(DC2Type:datetime_immutable)'
+        SQL);
+        $this->addSql(<<<'SQL'
+            CREATE TABLE orders (id INT NOT NULL, customer_id INT NOT NULL, status VARCHAR(255) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))
         SQL);
         $this->addSql(<<<'SQL'
             CREATE INDEX IDX_E52FFDEE9395C3F3 ON orders (customer_id)
         SQL);
         $this->addSql(<<<'SQL'
-            CREATE TABLE orders_goods (id INT NOT NULL, orders_id INT NOT NULL, goods_id INT NOT NULL, count SMALLINT NOT NULL, locked_price NUMERIC(10, 2) NOT NULL, PRIMARY KEY(id))
+            CREATE INDEX idx_status ON orders (status)
+        SQL);
+        $this->addSql(<<<'SQL'
+            COMMENT ON COLUMN orders.created_at IS '(DC2Type:datetime_immutable)'
+        SQL);
+        $this->addSql(<<<'SQL'
+            COMMENT ON COLUMN orders.updated_at IS '(DC2Type:datetime_immutable)'
+        SQL);
+        $this->addSql(<<<'SQL'
+            CREATE TABLE ordersGoods (orders_id INT NOT NULL, goods_id INT NOT NULL, PRIMARY KEY(orders_id, goods_id))
+        SQL);
+        $this->addSql(<<<'SQL'
+            CREATE INDEX IDX_37522799CFFE9AD6 ON ordersGoods (orders_id)
+        SQL);
+        $this->addSql(<<<'SQL'
+            CREATE INDEX IDX_37522799B7683595 ON ordersGoods (goods_id)
+        SQL);
+        $this->addSql(<<<'SQL'
+            CREATE TABLE orders_goods (id INT NOT NULL, orders_id INT NOT NULL, goods_id INT NOT NULL, count SMALLINT NOT NULL, locked_price NUMERIC(10, 2) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))
         SQL);
         $this->addSql(<<<'SQL'
             CREATE INDEX IDX_44C9168CCFFE9AD6 ON orders_goods (orders_id)
@@ -51,7 +75,19 @@ final class Version20250512210103 extends AbstractMigration
             CREATE INDEX IDX_44C9168CB7683595 ON orders_goods (goods_id)
         SQL);
         $this->addSql(<<<'SQL'
-            CREATE TABLE users (id INT NOT NULL, name VARCHAR(255) DEFAULT NULL, PRIMARY KEY(id))
+            COMMENT ON COLUMN orders_goods.created_at IS '(DC2Type:datetime_immutable)'
+        SQL);
+        $this->addSql(<<<'SQL'
+            COMMENT ON COLUMN orders_goods.updated_at IS '(DC2Type:datetime_immutable)'
+        SQL);
+        $this->addSql(<<<'SQL'
+            CREATE TABLE users (id INT NOT NULL, name VARCHAR(255) DEFAULT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))
+        SQL);
+        $this->addSql(<<<'SQL'
+            COMMENT ON COLUMN users.created_at IS '(DC2Type:datetime_immutable)'
+        SQL);
+        $this->addSql(<<<'SQL'
+            COMMENT ON COLUMN users.updated_at IS '(DC2Type:datetime_immutable)'
         SQL);
         $this->addSql(<<<'SQL'
             CREATE TABLE messenger_messages (id BIGSERIAL NOT NULL, body TEXT NOT NULL, headers TEXT NOT NULL, queue_name VARCHAR(190) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, available_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, delivered_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))
@@ -92,6 +128,12 @@ final class Version20250512210103 extends AbstractMigration
             ALTER TABLE orders ADD CONSTRAINT FK_E52FFDEE9395C3F3 FOREIGN KEY (customer_id) REFERENCES users (id) NOT DEFERRABLE INITIALLY IMMEDIATE
         SQL);
         $this->addSql(<<<'SQL'
+            ALTER TABLE ordersGoods ADD CONSTRAINT FK_37522799CFFE9AD6 FOREIGN KEY (orders_id) REFERENCES orders (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE ordersGoods ADD CONSTRAINT FK_37522799B7683595 FOREIGN KEY (goods_id) REFERENCES goods (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE
+        SQL);
+        $this->addSql(<<<'SQL'
             ALTER TABLE orders_goods ADD CONSTRAINT FK_44C9168CCFFE9AD6 FOREIGN KEY (orders_id) REFERENCES orders (id) NOT DEFERRABLE INITIALLY IMMEDIATE
         SQL);
         $this->addSql(<<<'SQL'
@@ -121,6 +163,12 @@ final class Version20250512210103 extends AbstractMigration
             ALTER TABLE orders DROP CONSTRAINT FK_E52FFDEE9395C3F3
         SQL);
         $this->addSql(<<<'SQL'
+            ALTER TABLE ordersGoods DROP CONSTRAINT FK_37522799CFFE9AD6
+        SQL);
+        $this->addSql(<<<'SQL'
+            ALTER TABLE ordersGoods DROP CONSTRAINT FK_37522799B7683595
+        SQL);
+        $this->addSql(<<<'SQL'
             ALTER TABLE orders_goods DROP CONSTRAINT FK_44C9168CCFFE9AD6
         SQL);
         $this->addSql(<<<'SQL'
@@ -131,6 +179,9 @@ final class Version20250512210103 extends AbstractMigration
         SQL);
         $this->addSql(<<<'SQL'
             DROP TABLE orders
+        SQL);
+        $this->addSql(<<<'SQL'
+            DROP TABLE ordersGoods
         SQL);
         $this->addSql(<<<'SQL'
             DROP TABLE orders_goods

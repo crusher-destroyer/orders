@@ -10,7 +10,7 @@ use App\Service\Entity\OrderService;
 use Nelmio\ApiDocBundle\Attribute\Model;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Attribute\MapQueryString;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\PropertyInfo\Type;
 use Symfony\Component\Routing\Annotation\Route;
 use OpenApi\Attributes as OA;
@@ -41,7 +41,7 @@ final class OrderController extends BaseController
     #[OA\QueryParameter(name: 'userId', description: 'id пользователя', required: true)]
     #[OA\QueryParameter(name: 'goods', description: 'товары', required: true)]
     public function create(
-        #[MapQueryString]
+        #[MapRequestPayload]
         CreateOrderRequest $request
     ): Response
     {

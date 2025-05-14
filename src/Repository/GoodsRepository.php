@@ -16,6 +16,15 @@ class GoodsRepository extends ServiceEntityRepository
         parent::__construct($registry, Goods::class);
     }
 
+    public function findOrderItems(array $ids): array
+    {
+        return $this->createQueryBuilder('g')
+            ->where('g.id IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Goods[] Returns an array of Goods objects
 //     */

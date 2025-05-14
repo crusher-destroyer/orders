@@ -10,7 +10,6 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: GoodsRepository::class)]
-#[ORM\Index(name: 'idx_id', columns: ['id'])]
 #[ORM\HasLifecycleCallbacks]
 class Goods
 {

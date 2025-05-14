@@ -1,14 +1,19 @@
 framework:
     messenger:
         failure_transport: failed
+        serializer:
+            default_serializer: messenger.transport.symfony_serializer
 
         transports:
             # https://symfony.com/doc/current/messenger.html#transport-configuration
             async:
                 dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
                 options:
-                    use_notify: true
-                    check_delayed_interval: 60000
+                    exchange:
+                        name: 'app.exchange'
+                        type: direct
+                    queues:
+                        app.queue.async: ~
                 retry_strategy:
                     max_retries: 3
                     multiplier: 2

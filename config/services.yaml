@@ -38,6 +38,7 @@ services:
             $ordersGoodsFactory: '@App\Factory\OrdersGoodsFactory'
             $usersRepository: '@App\Repository\UsersRepository'
             $repository: '@App\Repository\OrdersRepository'
+            $goodsRepository: '@App\Repository\GoodsRepository'
             $ordersGoodsRepository: '@App\Repository\OrdersGoodsRepository'
 
     app.lock.order_lock_factory:

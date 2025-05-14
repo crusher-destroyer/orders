@@ -9,7 +9,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: OrdersRepository::class)]
-#[ORM\Index(name: 'idx_id', columns: ['id'])]
 #[ORM\Index(name: 'idx_status', columns: ['status'])]
 #[ORM\HasLifecycleCallbacks]
 class Orders
@@ -37,7 +36,7 @@ class Orders
      * @var Collection<int, Goods>
      */
     #[ORM\ManyToMany(targetEntity: Goods::class)]
-    #[ORM\JoinTable(name: 'orders_goods')]
+    #[ORM\JoinTable(name: 'ordersGoods')]
     private Collection $goods;
 
     public function __construct()
